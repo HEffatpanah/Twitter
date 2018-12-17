@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from authAPI.models import Employee, Author
+from authAPI.models import Employee
 
 
 class UserForm(ModelForm):
