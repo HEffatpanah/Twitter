@@ -1,10 +1,8 @@
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.shortcuts import render
 
-from authAPI.forms import UserForm, EmployeeForm
+from authAPI.forms import EmployeeForm
 from authAPI.models import *
 
 
@@ -18,7 +16,10 @@ def signup(request):
         form = EmployeeForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            form.save();
+            user = form.save()
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
@@ -31,7 +32,6 @@ def signup(request):
     return render(request, 'authAPI/signup.html', {'form': form})
 
 
-
 def mainPage(request):
     return render(request, 'authAPI/mainPage.html')
 
@@ -42,7 +42,6 @@ def login(request):
 
 def checkAuth(request):
     user = authenticate(username=request.POST['username'], password=request.POST['password'])
-    # if User.objects.filter(username=request.POST['username'], password=request.POST['username']).exists():
     if user is not None:
         return HttpResponse('true')
     else:
