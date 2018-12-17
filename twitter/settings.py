@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'betterforms',
-    'poll.apps.PollConfig',
+    'authAPI.apps.authapiConfig',
 ]
 
 MIDDLEWARE = [
