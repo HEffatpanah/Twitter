@@ -1,18 +1,16 @@
-from django import forms
+from django.contrib.auth.models import User
 from django.forms import ModelForm
-from betterforms.multiform import MultiModelForm
-from django.contrib.auth.forms import UserCreationForm
-from .models import *
+
+from authAPI.models import Employee, Author
 
 
-class profileForm(ModelForm):
+class UserForm(ModelForm):
     class Meta:
         model = User
-        exclude = ('userName',)
+        fields = ('username', 'email', 'first_name', 'last_name', 'password',)
 
 
-class addUserMultiForm(MultiModelForm):
-    form_classes = {
-        'user': UserCreationForm,
-        'profile': profileForm,
-    }
+class EmployeeForm(UserForm):
+    class Meta:
+        model = Employee
+        fields = UserForm.Meta.fields + ('mobile',)
