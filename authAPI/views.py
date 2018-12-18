@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from authAPI.forms import EmployeeForm
+from authAPI.forms import ProfileForm, LoginForm
 from authAPI.models import *
 
 
@@ -12,7 +12,7 @@ from authAPI.models import *
 
 def signup(request):
     if request.method == 'POST':
-        form = EmployeeForm(request.POST, request.FILES)
+        form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             user.set_password(form.cleaned_data['password'])
@@ -20,8 +20,8 @@ def signup(request):
 
             return HttpResponse(form['password'].value())
     else:
-        form = EmployeeForm()
-        # form.fields['avatar'].widget = forms.HiddenInput()
+        form = ProfileForm()
+        form.fields['avatar'].widget = forms.HiddenInput()
 
     return render(request, 'authAPI/signup.html', {'form': form})
 
@@ -32,10 +32,12 @@ def mainPage(request):
 
 def login(request):
     if request.method == 'POST':
+        form = LoginForm()
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
-            return HttpResponse('true')
+            return render(request, 'authAPI/profilepage.html', {'form': form})
         else:
             return HttpResponse('false')
     else:
-        return render(request, 'authAPI/login.html')
+        form = LoginForm()
+        return render(request, 'authAPI/login.html', {'form': form})

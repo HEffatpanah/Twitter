@@ -37,26 +37,15 @@
         }
     </style>
 </head>
-<body >
+<body>
 <ul>
-    <li><a class="active" href="#home">Home</a></li>
-    <li><a href="#news">News</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a class="active" href="http://127.0.0.1:8000/authAPI/">Home</a></li>
     <li style="float:right"><a href="">log in</a></li>
 </ul>
 <form action="" method="POST" style="text-align: center">
     {% csrf_token %}
-
-
-    <label>password:<br>
-        <input type="password" name="password" required>
-    </label>
+    {{ form.as_p }}
     <br>
-
-    <label>username<br>
-        <input type="text" name="username" required>
-    </label>
-    <br><br>
     <input type="submit" value="Submit">
 </form>
 </body>
