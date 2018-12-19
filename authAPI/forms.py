@@ -18,12 +18,27 @@ class ProfileForm(UserForm):
     class Meta:
         model = Employee
         fields = UserForm.Meta.fields + ('mobile', 'avatar')
+        widgets = {
+            'avatar': forms.FileInput(),
+        }
+        help_texts = {
+            'username': None
+        }
 
 
 class LoginForm(ModelForm):
     class Meta:
         model = User
         fields = ('username', 'password')
+        help_texts = {
+            'username': None
+        }
+
+
+class TweetForm(ModelForm):
+    class Meta:
+        model = Tweet
+        fields = ('tweet_text', 'user')
         help_texts = {
             'username': None
         }
