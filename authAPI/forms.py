@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
-from authAPI.models import Employee
+from authAPI.models import Profile, Tweet
 
 
 class UserForm(ModelForm):
@@ -13,10 +13,9 @@ class UserForm(ModelForm):
 
 
 class ProfileForm(UserForm):
-    avatar = forms.ImageField()
 
     class Meta:
-        model = Employee
+        model = Profile
         fields = UserForm.Meta.fields + ('mobile', 'avatar')
         widgets = {
             'avatar': forms.FileInput(),
@@ -38,7 +37,4 @@ class LoginForm(ModelForm):
 class TweetForm(ModelForm):
     class Meta:
         model = Tweet
-        fields = ('tweet_text', 'user')
-        help_texts = {
-            'username': None
-        }
+        fields = ('tweet_text',)
