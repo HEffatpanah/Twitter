@@ -37,4 +37,4 @@ class LoginForm(ModelForm):
 class TweetForm(ModelForm):
     class Meta:
         model = Tweet
-        fields = ('tweet_text',)
+        fields = ('tweet_title', 'tweet_text')

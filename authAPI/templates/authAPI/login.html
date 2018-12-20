@@ -44,6 +44,9 @@
 </ul>
 <form action="" method="POST" style="text-align: center">
     {% csrf_token %}
+    {% if not auth %}
+        <p>wrong user or pass!</p>
+    {% endif %}
     {{ form.as_p }}
     <br>
     <input type="submit" value="Submit">

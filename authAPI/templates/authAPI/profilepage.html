@@ -119,6 +119,7 @@
         <i class="fa fa-bars" aria-hidden="true"></i>
     </header>
     <main>
+        <a href="logoutPage">logout</a>
         <div class="row">
             <div class="left col-lg-4">
                 <div class="photo-left">
@@ -126,7 +127,7 @@
                     <form action="" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        {{ form.as_p }}
+                        {{ form }}
                         <input type="submit" value="Submit">
                     </form>
                 </div>
@@ -135,8 +136,16 @@
                         {% csrf_token %}
 
                         {{ tweet.as_p }}
-                        <input type="submit" value="Submit">
+                        <input type="submit" value="Add tweet">
                     </form>
+                    <div>
+                    Tweets:
+                        {% for t in personsTweet %}
+                            <div>
+                                <strong>{{ t.tweet_title }}</strong><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;{{ t.tweet_text }}</div>
+                        {% endfor %}
+                    </div>
                 </div>
 
             </div>

@@ -1,3 +1,10 @@
 {% for t in tweets %}
-    <div>{{ t.user.username }} : {{ t.tweet_text }}</div>
+    <div>
+        <img style="height: 5%" onerror="this.src='../static/images/user.png'"  src={{ t.user.avatar|stringformat:"s"|slice:"7:"}}>
+        <div>
+            <strong>{{ t.tweet_title }}</strong><br>
+            {{ t.user.username }} :<br>
+            {{ t.tweet_text }}
+        </div>
+    </div>
 {% endfor %}
