@@ -31,7 +31,7 @@ class HelloView(APIView):
 
 @csrf_exempt
 @api_view(["GET"])
-def sample_api(APIView):
+def sample_api(APIview):
     data = {'sample_data': 123}
     print('\n\nsalam\n\n')
     # return Response(data, status=HTTP_200_OK)
@@ -41,11 +41,22 @@ def sample_api(APIView):
 
 def test(requset):
     headers = {'Content-Type': 'application/json', 'Authorization': 'Token 5b009eb4691fee9787442273b2a72e9d74299ecb'}
-    r = requests.get('http://127.0.0.1:8000/authAPI/api/sampleapi', headers=headers)
-    print('\n\nsalam\n\n', r, '\n\n')
-    # response = HttpResponseRedirect('http://127.0.0.1:8000/authAPI/api/sampleapi')
+    # r = requests.post('http://127.0.0.1:8000/authAPI/api/sampleapi', headers=headers)
+    # print('\n\nsalam\n\n', r, '\n\n')
+    response = HttpResponseRedirect('http://127.0.0.1:8000/authAPI/api/sampleapi')
     # return redirect('api/sampleapi', headers=headers)
-    return HttpResponse('salam')
+    # r = requests.get(url='http://localhost:8000/authAPI/api/sampleapi', headers=headers)
+    # print('\n\n\n', r.ok, '\n\n\n')
+    # response = redirect('sampleapi')
+    # Set 'Test' header and then delete
+    response['Authorization'] = 'Token d58d14aeeb3e45710b9b3446d4499794c75c42f2'
+    # del response['Test']
+    # Set 'Test Header' header
+    # response['Test Header'] = 'Test Header'
+    # print(response)
+    return response
+    # return HttpResponse('kl')
+    # return redirect('sampleapi', header=headers)
 
 
 @csrf_exempt
@@ -97,8 +108,8 @@ def login_page(request):
     if request.method == 'POST':
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
-            # token = Token.objects.get_or_create(user=user)# ---------------------< here
-            # print(token[0].key, '\n\n\n\n\n')#------------------------------< here
+            token = Token.objects.get_or_create(user=user)  # ---------------------< here
+            print(token[0].key, '\n\n\n\n\n')  # ------------------------------< here
             login(request, user)
             return redirect('profile')
         else:
@@ -113,7 +124,9 @@ def profile(request):
     if request.method == 'POST':
         employee = Profile.objects.get(username=request.user)
         form = ProfileForm(request.POST, request.FILES, instance=employee)
-
+        headers = {'Content-Type': 'application/json',
+                   'Authorization': 'Token 5b009eb4691fee9787442273b2a72e9d74299ecb'}
+        r = requests.get(url='http://localhost:8000/authAPI/api/sampleapi', headers=headers)
         if form.is_valid():
             employee = form.save(commit=False)
             employee.save()
@@ -122,7 +135,7 @@ def profile(request):
         # form = ProfileForm(instance=user)
 
         tweet = TweetForm(request.POST, request.FILES)
-        if tweet.is_valid():
+        if tweet.is_valid() and r.ok:
             t = tweet.save(commit=False)
             t.user = Profile.objects.get(username=request.user)
             t.save()

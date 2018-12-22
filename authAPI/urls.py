@@ -13,8 +13,9 @@ urlpatterns = [
     path('tweets', views.tweets, name='tweets'),
     # path('logoutPage', views.logout, name='logout'),
     path('logoutPage', views.logoutUser, name='logout'),
-    path('api/login', views.my_login),
-    path('api/sampleapi', views.sample_api),
+    path('api/login', views.my_login, name='mylogin'),
+    path('api/sampleapi', views.sample_api, name='sampleapi'),
+    path('api/test', views.test),
 
 
 
