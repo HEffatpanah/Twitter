@@ -123,10 +123,9 @@
         <div class="row">
             <div class="left col-lg-4">
                 <div class="photo-left">
-                    <img class="photo" src={{ form.instance.avatar|stringformat:"s"|slice:"7:" }}>
+                    <img class="photo" src={{ form.instance.avatar }}>
                     <form action="" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-
                         {{ form }}
                         <input type="submit" value="Submit">
                     </form>

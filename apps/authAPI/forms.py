@@ -1,7 +1,7 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.forms import ModelForm
-from authAPI.models import Profile, Tweet
+
+from apps.authAPI.models import *
 
 
 class UserForm(ModelForm):

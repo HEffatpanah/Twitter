@@ -4,8 +4,8 @@ from django.db import models
 
 class Profile(User):
     mobile = models.CharField(max_length=100, blank=True)
-    avatar = models.ImageField(upload_to="authAPI/static/images", null=True, blank=True,
-                               default="authAPI/static/images/user.png")
+    avatar = models.ImageField(upload_to="apps/authAPI/static/images", null=True, blank=True,
+                               default="apps/authAPI/static/images/user.png")
 
 
 class Tweet(models.Model):

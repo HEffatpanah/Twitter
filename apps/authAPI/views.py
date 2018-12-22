@@ -1,24 +1,22 @@
 import requests
-from django import forms
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
-from rest_framework.authtoken.models import Token
-from authAPI.forms import ProfileForm, LoginForm, UserForm, TweetForm
-from authAPI.models import *
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from django.contrib.auth import authenticate
+from django.contrib.auth import login, logout
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_200_OK
 )
-from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from apps.authAPI.forms import *
+from apps.authAPI.models import *
 
 
 class HelloView(APIView):
@@ -124,6 +122,7 @@ def profile(request):
     if request.method == 'POST':
         employee = Profile.objects.get(username=request.user)
         form = ProfileForm(request.POST, request.FILES, instance=employee)
+        print('fuck img django\n', form.instance.avatar.name)
         headers = {'Content-Type': 'application/json',
                    'Authorization': 'Token 5b009eb4691fee9787442273b2a72e9d74299ecb'}
         r = requests.get(url='http://localhost:8000/authAPI/api/sampleapi', headers=headers)
