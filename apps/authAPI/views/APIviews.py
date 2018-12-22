@@ -16,7 +16,7 @@ from rest_framework.status import (
 from rest_framework.views import APIView
 
 from apps.authAPI.forms import *
-from apps.authAPI.middleware import OnlyOneUserMiddleware
+from apps.authAPI.logics import OnlyOneUserMiddleware
 from apps.authAPI.models import *
 
 

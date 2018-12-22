@@ -1,29 +1,12 @@
-import datetime
-
 import requests
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from rest_framework.authtoken.models import Token
 
 from apps.authAPI.forms import *
-from apps.authAPI.middleware import OnlyOneUserMiddleware
+from apps.authAPI.logics import OnlyOneUserMiddleware, IDS
 from apps.authAPI.models import *
-
-
-def IDS(f):
-    def attack_check(*args):
-        x_forwarded_for = args[0].META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = args[0].META.get('REMOTE_ADDR')
-        browser = args[0].user_agent.browser.family
-        current_time = datetime.datetime.now()
-        print(ip, browser, current_time, args[0].user.is_authenticated)
-        return f(*args)
-
-    return attack_check
 
 
 @IDS
@@ -73,6 +56,7 @@ def login_page(request):
 
 
 @IDS
+@login_required
 def profile(request):
     user = request.user
     if request.method == 'POST':
@@ -110,6 +94,7 @@ def profile(request):
 
 @IDS
 def logoutUser(request):
+    a = OnlyOneUserMiddleware()
+    a.clearSession(request)
     logout(request)
-    print('hello\n\n\n\n ')
     return redirect('home')
