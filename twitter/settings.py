@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,6 +38,7 @@ INSTALLED_APPS = [
     'apps.authAPI.apps.authapiConfig',
     'rest_framework.authtoken',
     'rest_framework',
+    'django_cleanup',
 ]
 
 MIDDLEWARE = [
@@ -117,7 +117,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'twitter/media')
 
@@ -126,5 +125,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated', )
+        'rest_framework.permissions.IsAuthenticated',)
 }
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
