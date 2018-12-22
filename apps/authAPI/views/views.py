@@ -1,3 +1,5 @@
+import datetime
+
 import requests
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
@@ -9,8 +11,22 @@ from apps.authAPI.middleware import OnlyOneUserMiddleware
 from apps.authAPI.models import *
 
 
+def IDS(f):
+    def attack_check(*args):
+        x_forwarded_for = args[0].META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = args[0].META.get('REMOTE_ADDR')
+        browser = args[0].user_agent.browser.family
+        current_time = datetime.datetime.now()
+        print(ip, browser, current_time, args[0].user.is_authenticated)
+        return f(*args)
+
+    return attack_check
 
 
+@IDS
 def signup(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
@@ -27,16 +43,19 @@ def signup(request):
     return render(request, 'authAPI/signup.html', {'form': form})
 
 
+@IDS
 def mainPage(request):
     return render(request, 'authAPI/mainPage.html')
 
 
+@IDS
 def tweets(request):
     tweet = Tweet.objects.all()
 
     return render(request, 'authAPI/tweets.html', {'tweets': tweet})
 
 
+@IDS
 def login_page(request):
     form = LoginForm()
     if request.method == 'POST':
@@ -53,6 +72,7 @@ def login_page(request):
         return render(request, 'authAPI/login.html', {'form': form, 'auth': True})
 
 
+@IDS
 def profile(request):
     user = request.user
     if request.method == 'POST':
@@ -88,6 +108,7 @@ def profile(request):
     return render(request, 'authAPI/profilepage.html', {'form': form, 'tweet': tweet, 'personsTweet': persons_tweet})
 
 
+@IDS
 def logoutUser(request):
     logout(request)
     print('hello\n\n\n\n ')
