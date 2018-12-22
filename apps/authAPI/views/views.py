@@ -9,6 +9,8 @@ from apps.authAPI.middleware import OnlyOneUserMiddleware
 from apps.authAPI.models import *
 
 
+
+
 def signup(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
@@ -40,8 +42,6 @@ def login_page(request):
     if request.method == 'POST':
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
-            token = Token.objects.get_or_create(user=user)  # ---------------------< here
-            print(token[0].key, '\n\n\n\n\n')  # ------------------------------< here
             login(request, user)
             a = OnlyOneUserMiddleware()
             a.process_request(request)

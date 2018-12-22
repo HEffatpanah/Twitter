@@ -1,0 +1,140 @@
+<div class="container">
+    <header>
+        <style>
+            html, body {
+                background: #efefef;
+                font-family: "Arial";
+            }
+
+            .container {
+                max-width: 1250px;
+                margin: 30px auto 30px;
+                padding: 0 !important;
+                width: 90%;
+                background-color: #fff;
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.10), 0 3px 6px rgba(0, 0, 0, 0.10);
+            }
+
+            header {
+                background: #eee url("https://image.noelshack.com/fichiers/2017/38/2/1505775648-annapurnafocus.jpg") no-repeat center;
+                background-size: cover;
+                height: 250px;
+            }
+
+            header i {
+                position: relative;
+                cursor: pointer;
+                right: -96%;
+                top: 25px;
+                font-size: 18px !important;
+                color: #fff;
+            }
+
+            @media (max-width: 800px) {
+                header {
+                    height: 150px;
+                }
+
+                header i {
+                    right: -90%;
+                }
+            }
+
+            main {
+                padding: 20px 20px 0 20px;
+            }
+
+            .left {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+            }
+
+            .photo {
+                width: 200px;
+                height: 200px;
+                margin-top: -120px;
+                border-radius: 100px;
+                border: 4px solid #fff;
+            }
+
+
+            @media (max-width: 990px) {
+                .active {
+                    right: calc(50% - 60px);
+                    top: 50px;
+                }
+            }
+
+
+            .social i {
+                cursor: pointer;
+                margin: 0 15px;
+            }
+
+            .social i:nth-child(1) {
+                color: #4267b2;
+            }
+
+            .social i:nth-child(2) {
+                color: #1da1f2;
+            }
+
+            .social i:nth-child(3) {
+                color: #bd081c;
+            }
+
+            .social i:nth-child(4) {
+                color: #36465d;
+            }
+
+            .nav li {
+                margin: 40px 30px 0 10px;
+                cursor: pointer;
+                font-size: 13pt;
+                text-transform: uppercase;
+                font-family: 'Montserrat', sans-serif;
+                font-weight: 500;
+                color: #888;
+            }
+
+            .nav li:hover, .nav li:nth-child(1) {
+                color: #999;
+                border-bottom: 2px solid #999;
+            }
+
+            .gallery div {
+                margin-bottom: 30px;
+            }
+
+            .gallery img {
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.10), 0 3px 6px rgba(0, 0, 0, 0.10);
+                width: auto;
+                height: auto;
+                cursor: pointer;
+                max-width: 100%;
+            }
+        </style>
+        <i class="fa fa-bars" aria-hidden="true"></i>
+    </header>
+    <main>
+        <a href="logoutPage">logout</a>
+        <div class="row">
+            <div class="left col-lg-4">
+                <div class="photo-left">
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <p>Token:</p>
+                        <p>{{ token }}</p>
+                        <br>
+                        <input type="submit" value="Generate Token">
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+</div>
+

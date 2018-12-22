@@ -10,8 +10,10 @@ urlpatterns = [
     path('', views.mainPage, name='home'),
     path('profile', views.profile, name='profile'),
     path('tweets', views.tweets, name='tweets'),
-    # path('logoutPage', views.logout, name='logout'),
     path('logoutPage', views.logoutUser, name='logout'),
+    path('api/v2/profile', APIviews.generate_token, name='profile+token'),
+    path('api/v2/login', APIviews.login_page, name='login+token'),
+    path('api/v2/tweet', APIviews.tweet, name='tweet+token'),
 
 
 
