@@ -1,8 +1,9 @@
 import datetime
 
 from django.contrib.sessions.models import Session
+from django.utils import timezone
 
-from apps.authAPI.models import Profile
+from apps.authAPI.models import Profile, UserRequest
 
 
 def IDS(f):
@@ -13,8 +14,24 @@ def IDS(f):
         else:
             ip = args[0].META.get('REMOTE_ADDR')
         browser = args[0].user_agent.browser.family
-        current_time = datetime.datetime.now()
-        print(ip, browser, current_time, args[0].user.is_authenticated)
+        current_time = timezone.now()
+        authenticated = args[0].user.is_authenticated
+        user_request = UserRequest.objects.get(ip=ip)
+        h = 10
+        n = 2
+        if current_time.timestamp() - user_request.time.timestamp() < h:
+            user_request.number_of_sequential_requests += 1
+        elif current_time.timestamp() - user_request.time.timestamp() >= h:
+            user_request.number_of_sequential_requests = 0
+        if not authenticated:
+            user_request.number_of_unAuthenticated += 1
+        if authenticated:
+            user_request.number_of_unAuthenticated = 0
+        user_request.time = current_time
+        user_request.save()
+        if user_request.number_of_sequential_requests > n or user_request.number_of_unAuthenticated >= n and user_request.browser == browser:
+            print("Attack!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        user_request.browser = browser
         return f(*args)
 
     return attack_check
