@@ -6,7 +6,7 @@ from apps.authAPI.views import views, APIviews
 
 urlpatterns = [
     path('signup', views.signup, name='signup'),
-    path('login', views.login_page, name='login'),
+    path('loginp', views.login_page, name='login'),
     path('logoutPage', views.logoutUser, name='logout'),
     path('api/v1/login', APIviews.login_page, name='index'),
     path('api/v1/tweet', APIviews.tweet, name='tweet'),

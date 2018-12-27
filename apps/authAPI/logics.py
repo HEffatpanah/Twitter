@@ -3,35 +3,51 @@ import datetime
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 
-from apps.authAPI.models import Profile, UserRequest
+from apps.authAPI.models import Profile, Request, IP, IDSvar
 
 
 def IDS(f):
     def attack_check(*args):
+        h = 10
+        n = 4
         x_forwarded_for = args[0].META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
+            ip_address = x_forwarded_for.split(',')[0]
         else:
-            ip = args[0].META.get('REMOTE_ADDR')
+            ip_address = args[0].META.get('REMOTE_ADDR')
         browser = args[0].user_agent.browser.family
         current_time = timezone.now()
         authenticated = args[0].user.is_authenticated
-        user_request = UserRequest.objects.get(ip=ip)
-        h = 10
-        n = 2
-        if current_time.timestamp() - user_request.time.timestamp() < h:
-            user_request.number_of_sequential_requests += 1
-        elif current_time.timestamp() - user_request.time.timestamp() >= h:
-            user_request.number_of_sequential_requests = 0
+        conf = IDSvar.objects.last()
+        if conf is None:
+            IDSvar.objects.create(h=h, n=n)
+        else:
+            h = conf.h
+            n = conf.n
+        ip = IP.objects.filter(ip=ip_address).first()
+        if ip is None:
+            ip = IP.objects.create(ip=ip_address, number_of_unAuthenticated=0 if authenticated else 1,
+                                   number_of_sequential_requests=1)
+            Request.objects.create(ipInfo=ip, browser=browser,
+                                   time=current_time)
+            return f(*args)
+        old_request = Request.objects.filter(ipInfo=ip).last()
+        new_request = Request.objects.create(ipInfo=ip, browser=browser, time=current_time)
+        if old_request is None:
+            return f(*args)
+        if current_time.timestamp() - old_request.time.timestamp() < h:
+            ip.number_of_sequential_requests += 1
+        elif current_time.timestamp() - old_request.time.timestamp() >= h:
+            new_request.ipInfo.number_of_sequential_requests = 1
         if not authenticated:
-            user_request.number_of_unAuthenticated += 1
+            ip.number_of_unAuthenticated += 1
         if authenticated:
-            user_request.number_of_unAuthenticated = 0
-        user_request.time = current_time
-        user_request.save()
-        if user_request.number_of_sequential_requests > n or user_request.number_of_unAuthenticated >= n and user_request.browser == browser:
+            ip.number_of_unAuthenticated = 0
+        ip.save()
+        if new_request.ipInfo.number_of_sequential_requests >= n or \
+                ip.number_of_unAuthenticated >= n:
             print("Attack!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        user_request.browser = browser
+        new_request.browser = browser
         return f(*args)
 
     return attack_check
