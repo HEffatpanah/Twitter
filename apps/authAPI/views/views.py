@@ -18,7 +18,7 @@ def signup(request):
             user.set_password(form.cleaned_data['password'])
             user.save()
 
-            return redirect('index')
+            return redirect('home')
     else:
         form = ProfileForm()
         form.fields['avatar'].widget = forms.HiddenInput()
@@ -39,6 +39,7 @@ def tweets(request):
 
 
 @IDS
+# @OnlyOneUserMiddleware
 def login_page(request):
     form = LoginForm()
     if request.method == 'POST':
@@ -94,8 +95,8 @@ def profile(request):
 
 @IDS
 def logoutUser(request):
-    a = OnlyOneUserMiddleware()
-    a.clearSession(request)
+    # a = OnlyOneUserMiddleware()
+    # a.clearSession(request)
     logout(request)
     return redirect('home')
 
