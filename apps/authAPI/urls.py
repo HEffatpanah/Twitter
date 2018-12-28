@@ -15,7 +15,8 @@ urlpatterns = [
     path('login_success', views.login_success, name='login_success'),
     path('tweets', views.tweets, name='tweets'),
     path('api/v2/profile', APIviews.generate_token, name='profile+token'),
-    path('api/v2/login', APIviews.login_page, name='login+token'),
+    # path('api/v2/login', APIviews.login_page, name='login+token'),
+    path('api/v2/logout', APIviews.logoutUser, name='logout'),
     path('api/v2/tweet', APIviews.tweet, name='tweet+token'),
 
     # url(r'^$', views.home, name='home'),

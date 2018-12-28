@@ -1,12 +1,13 @@
 import requests
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
@@ -49,6 +50,7 @@ def logoutUser(request):
     return redirect('home')
 
 
+@permission_classes((IsAuthenticated,))
 def generate_token(request):
     user = Profile.objects.get(username=request.user)
     if request.method == 'POST':
@@ -58,20 +60,3 @@ def generate_token(request):
     else:
         token, _ = Token.objects.get_or_create(user=user)
         return render(request, 'authAPI/profilePage+token.html', {'token': token})
-
-
-def login_page(request):
-    form = LoginForm()
-    if request.method == 'POST':
-        user = authenticate(username=request.POST['username'], password=request.POST['password'])
-        if user is not None:
-            login(request, user)
-            a = OnlyOneUserMiddleware()
-            a.process_request(request)
-            return redirect('profile+token')
-        else:
-            return render(request, 'authAPI/login.html', {'form': form, 'auth': False})
-    else:
-
-        return render(request, 'authAPI/login.html', {'form': form, 'auth': True})
-
