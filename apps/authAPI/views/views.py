@@ -28,6 +28,11 @@ def signup(request):
 
 @IDS
 def mainPage(request):
+    user = request.user
+    prof = Profile.objects.filter(username=user)
+    if prof.count() is 0:
+        u = Profile(user_ptr_id=user.pk)
+        u.save()
     return render(request, 'authAPI/mainPage.html')
 
 
@@ -82,7 +87,6 @@ def profile(request):
             t.save()
             return redirect("profile")
     persons_tweet = Tweet.objects.filter(user=user)
-    user = Profile.objects.get(username=user)
     form = ProfileForm(instance=user)
     form.fields['password'].widget = forms.HiddenInput()
     form.fields['username'].widget = forms.HiddenInput()
