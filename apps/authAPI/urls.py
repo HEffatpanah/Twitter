@@ -12,14 +12,15 @@ urlpatterns = [
     path('api/v1/tweet', APIviews.tweet, name='tweet'),
     path('', views.mainPage, name='home'),
     path('profile', views.profile, name='profile'),
+    path('login_success', views.login_success, name='login_success'),
     path('tweets', views.tweets, name='tweets'),
     path('api/v2/profile', APIviews.generate_token, name='profile+token'),
     path('api/v2/login', APIviews.login_page, name='login+token'),
     path('api/v2/tweet', APIviews.tweet, name='tweet+token'),
 
-    url(r'^$', views.home, name='home'),
-    url(r'^login/$', auth_views.LogoutView.as_view(), name='login'),
-    url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    # url(r'^$', views.home, name='home'),
+    # url(r'^login/$', auth_views.LogoutView.as_view(), name='login'),
+    # url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^auth/', include('social_django.urls', namespace='social')),  # <--
-    url(r'^admin/', admin.site.urls),
+    # url(r'^admin/', admin.site.urls),
 ]

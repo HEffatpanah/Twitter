@@ -1,6 +1,7 @@
 import requests
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -28,11 +29,6 @@ def signup(request):
 
 @IDS
 def mainPage(request):
-    user = request.user
-    prof = Profile.objects.filter(username=user)
-    if prof.count() is 0:
-        u = Profile(user_ptr_id=user.pk)
-        u.save()
     return render(request, 'authAPI/mainPage.html')
 
 
@@ -44,35 +40,45 @@ def tweets(request):
 
 
 @IDS
-# @OnlyOneUserMiddleware
 def login_page(request):
+    if request.user.is_authenticated:
+        return render(request, 'authAPI/login.html', {'login': True})
     form = LoginForm()
     if request.method == 'POST':
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
             login(request, user)
-            a = OnlyOneUserMiddleware()
-            a.process_request(request)
-            return redirect('profile')
+            return redirect('login_success')
         else:
-            return render(request, 'authAPI/login.html', {'form': form, 'auth': False})
+            return render(request, 'authAPI/login.html', {'form': form, 'login': False, 'auth': False})
     else:
 
-        return render(request, 'authAPI/login.html', {'form': form, 'auth': True})
+        return render(request, 'authAPI/login.html', {'form': form, 'login': False, 'auth': True})
+
+
+@login_required
+@OnlyOneUserMiddleware
+def login_success(request):
+    user = request.user
+    prof = Profile.objects.filter(username=user)
+    if prof.count() is 0:
+        u = User.objects.get(username=user)
+        p = Profile(user_ptr_id=u.pk)
+        p.__dict__.update(u.__dict__)
+        p.save()
+    return redirect('profile')
 
 
 @IDS
 @login_required
 def profile(request):
     user = request.user
+    employee = Profile.objects.get(username=request.user)
     if request.method == 'POST':
-        employee = Profile.objects.get(username=request.user)
         form = ProfileForm(request.POST, request.FILES, instance=employee)
         print('fuck img django\n', form.instance.avatar.name)
-        headers = {'Content-Type': 'application/json',
-                   'Authorization': 'Token 5b009eb4691fee9787442273b2a72e9d74299ecb'}
-        r = requests.get(url='http://localhost:8000/authAPI/api/sampleapi', headers=headers)
         if form.is_valid():
+            print('fuck img django\n', form.instance.avatar.name)
             employee = form.save(commit=False)
             employee.save()
             return redirect("profile")
@@ -87,7 +93,7 @@ def profile(request):
             t.save()
             return redirect("profile")
     persons_tweet = Tweet.objects.filter(user=user)
-    form = ProfileForm(instance=user)
+    form = ProfileForm(instance=employee)
     form.fields['password'].widget = forms.HiddenInput()
     form.fields['username'].widget = forms.HiddenInput()
     form.fields['first_name'].widget = forms.HiddenInput()

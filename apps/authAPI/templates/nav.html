@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
     <meta charset="UTF-8">
     <style>
         ul {
@@ -36,22 +33,11 @@
             background-color: #4CAF50;
         }
     </style>
-</head>
-<body>
-{% include "nav.html" %}
-{% if login %}
-        <p style="text-align: center">You are already logged in</p>
-{% else %}
-    <form action="" method="POST" style="text-align: center">
-    {% csrf_token %}
-    {% if not auth %}
-        <p>wrong user or pass!</p>
-    {% endif %}
-    {{ form.as_p }}
-    <br>
-    <input type="submit" value="Submit">
-    <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a><br>
-{% endif %}
-</form>
-</body>
-</html>
+
+<ul>
+    <li><a class="active" href="http://127.0.0.1:8000/authAPI/">Home</a></li>
+    <li style="float:right"><a href="http://127.0.0.1:8000/authAPI/loginp">log in</a></li>
+    <li style="float:right"><a href="http://127.0.0.1:8000/authAPI/signup">signup</a></li>
+    <li><a href="http://127.0.0.1:8000/authAPI/profile">profile</a></li>
+    <li><a href="http://127.0.0.1:8000/authAPI/tweets">tweets</a></li>
+</ul>
