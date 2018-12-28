@@ -53,9 +53,8 @@ def IDS(f):
     return attack_check
 
 
-def OnlyOneUserMiddleware(f):
-    def process_request(*args):
-        request = args[0]
+class OnlyOneUserMiddleware(object):
+    def process_request(self, request):
         p = Profile.objects.get(username=request.user)
         cur_session_key = p.session_key
         print("sess  ", cur_session_key)
@@ -67,5 +66,3 @@ def OnlyOneUserMiddleware(f):
                 pass
         p.session_key = request.session.session_key
         p.save()
-        return f(*args)
-    return process_request

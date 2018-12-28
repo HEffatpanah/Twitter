@@ -57,15 +57,17 @@ def login_page(request):
 
 
 @login_required
-@OnlyOneUserMiddleware
 def login_success(request):
     user = request.user
+    print(user)
     prof = Profile.objects.filter(username=user)
     if prof.count() is 0:
         u = User.objects.get(username=user)
         p = Profile(user_ptr_id=u.pk)
         p.__dict__.update(u.__dict__)
         p.save()
+    a = OnlyOneUserMiddleware()
+    a.process_request(request)
     return redirect('profile')
 
 
