@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-
+from captcha.fields import ReCaptchaField
 from apps.authAPI.models import *
 
 
@@ -25,6 +25,10 @@ class ProfileForm(UserForm):
         }
 
 
+class ReCAPTCHAForm(forms.Form):
+    captcha = ReCaptchaField()
+
+
 class LoginForm(ModelForm):
     class Meta:
         model = User
@@ -32,6 +36,7 @@ class LoginForm(ModelForm):
         help_texts = {
             'username': None
         }
+
 
 
 class TweetForm(ModelForm):

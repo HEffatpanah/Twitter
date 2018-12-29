@@ -31,3 +31,7 @@ class Request(models.Model):
 class IDSvar(models.Model):
     h = models.IntegerField()
     n = models.IntegerField()
+
+class UserRquests(models.Model):
+    username = models.CharField(max_length=100, default=' ')
+    number_of_requests = models.IntegerField(default=0)

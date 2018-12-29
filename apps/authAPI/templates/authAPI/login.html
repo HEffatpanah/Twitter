@@ -52,6 +52,13 @@
     <input type="submit" value="Submit">
     <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a><br>
 {% endif %}
+{% if show_captcha %}
+<div >
+<script src='https://www.google.com/recaptcha/api.js'></script>
+    <div class="g-recaptcha" data-sitekey="6LfLaYUUAAAAAEd_A_UpHDpKTuHbjGpVH4Z0OcIv"></div>
+    <button type="submit" class="btn btn-primary">Post</button>
+</div>
+{% endif %}
 </form>
 </body>
 </html>

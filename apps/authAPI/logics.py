@@ -1,9 +1,11 @@
 import datetime
-
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 
 from apps.authAPI.models import Profile, Request, IP, IDSvar
+from twitter import settings
 
 
 def IDS(f):
@@ -51,6 +53,31 @@ def IDS(f):
         return f(*args)
 
     return attack_check
+
+
+def captchaChecker(f):
+    def process_captcha(*args):
+        show_captcha = False
+        x_forwarded_for = args[0].META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip_address = x_forwarded_for.split(',')[0]
+        else:
+            ip_address = args[0].META.get('REMOTE_ADDR')
+        ip = IP.objects.filter(ip=ip_address).first()
+        print(ip.number_of_unAuthenticated, '\n\n\n')
+        if ip.number_of_unAuthenticated >= 18:
+            show_captcha = True
+            u = User.objects.get(username=args[0].POST['username'])
+            if u.exists():
+                send_mail(
+                    'Warning',
+                    'You are attacking!!!!!1',
+                    settings.EMAIL_HOST_USER,
+                    [u.email],
+                    fail_silently=False,
+                )
+        return f(args[0], show_captcha)
+    return process_captcha
 
 
 class OnlyOneUserMiddleware(object):

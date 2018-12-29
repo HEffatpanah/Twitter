@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_cleanup',
     'django_user_agents',
     'social_django',
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,15 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'HoKYYwgbW_U3RTurXhekxzdt'
 
 # SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '163287098467-5qnslq8053vck5qmt5l81uf0nqi6m1b8.apps.googleusercontent.com'
 # SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'tvYx7Vjuiupe0-DGdfc_fJQA'
+
+GOOGLE_RECAPTCHA_SECRET_KEY = '6LfLaYUUAAAAAPT1sr3hPkmAXECxMJS8leJRVP-C'
+# RECAPTCHA_PRIVATE_KEY = '6LfLaYUUAAAAAEd_A_UpHDpKTuHbjGpVH4Z0OcIv'
+# RECAPTCHA_PUBLIC_KEY = '6LfLaYUUAAAAAPT1sr3hPkmAXECxMJS8leJRVP-C'
+NOCAPTCHA = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'khani.ali1376@gmail.com'
+EMAIL_HOST_PASSWORD = 'alikhani13761220'

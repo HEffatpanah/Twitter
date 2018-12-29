@@ -1,3 +1,5 @@
+import json
+import urllib
 import requests
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
@@ -6,8 +8,9 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from apps.authAPI.forms import *
-from apps.authAPI.logics import OnlyOneUserMiddleware, IDS
+from apps.authAPI.logics import OnlyOneUserMiddleware, IDS, captchaChecker
 from apps.authAPI.models import *
+from twitter import settings
 
 
 @IDS
@@ -40,20 +43,36 @@ def tweets(request):
 
 
 @IDS
-def login_page(request):
+@captchaChecker
+def login_page(request, show_captcha):
+    print('\n\n\n\n', show_captcha, '\n\n')
     if request.user.is_authenticated:
         return render(request, 'authAPI/login.html', {'login': True})
     form = LoginForm()
     if request.method == 'POST':
-        user = authenticate(username=request.POST['username'], password=request.POST['password'])
+        loginUser = request.POST['username']
+        user = authenticate(username=loginUser, password=request.POST['password'])
         if user is not None:
+            if show_captcha:
+                recaptcha_response = request.POST.get('g-recaptcha-response')
+                data = {
+                    'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+                    'response': recaptcha_response
+                }
+                r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+                result = r.json()
+                if result['success']:
+                    login(request, user)
+                    return redirect('login_success')
+                else:
+                    return render(request, 'authAPI/login.html', {'form': form, 'login': False, 'auth': False, 'show_captcha':show_captcha})
             login(request, user)
             return redirect('login_success')
         else:
-            return render(request, 'authAPI/login.html', {'form': form, 'login': False, 'auth': False})
+            return render(request, 'authAPI/login.html', {'form': form, 'login': False, 'auth': False, 'show_captcha':show_captcha})
     else:
 
-        return render(request, 'authAPI/login.html', {'form': form, 'login': False, 'auth': True})
+        return render(request, 'authAPI/login.html', {'form': form, 'login': False, 'auth': True, 'show_captcha':show_captcha})
 
 
 @login_required

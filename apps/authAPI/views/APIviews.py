@@ -24,7 +24,24 @@ from apps.authAPI.models import *
 @api_view(["POST"])
 @permission_classes((AllowAny,))
 def login_page(request):
+    authenticated = request.user.is_authenticated
     user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip_address = x_forwarded_for.split(',')[0]
+    else:
+        ip_address = request.META.get('REMOTE_ADDR')
+    ip = IP.objects.filter(ip=ip_address).first()
+    if ip is None:
+        ip = IP.objects.create(ip=ip_address, number_of_unAuthenticated=0 if authenticated else 1,
+                               number_of_sequential_requests=1)
+    if not authenticated:
+        ip.number_of_unAuthenticated += 1
+    if authenticated:
+        ip.number_of_unAuthenticated = 0
+    ip.save()
+    if ip.number_of_unAuthenticated >= 18:
+        return Response('‫‪Request‬‬ ‫‪Blocked‬‬')
     if user is None:
         return Response({'token': 'boooogh you are you kidding me?'},
                         status=HTTP_404_NOT_FOUND)
