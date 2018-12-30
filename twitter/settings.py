@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django_cleanup',
     'django_user_agents',
     'social_django',
-    'captcha',
 ]
 
 MIDDLEWARE = [

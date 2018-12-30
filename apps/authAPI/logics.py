@@ -1,4 +1,3 @@
-import datetime
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -65,17 +64,21 @@ def captchaChecker(f):
             ip_address = args[0].META.get('REMOTE_ADDR')
         ip = IP.objects.filter(ip=ip_address).first()
         print(ip.number_of_unAuthenticated, '\n\n\n')
-        if ip.number_of_unAuthenticated >= 18:
+        if ip.number_of_unAuthenticated >= 8:
             show_captcha = True
-            u = User.objects.get(username=args[0].POST['username'])
-            if u.exists():
-                send_mail(
-                    'Warning',
-                    'You are attacking!!!!!1',
-                    settings.EMAIL_HOST_USER,
-                    [u.email],
-                    fail_silently=False,
-                )
+            try:
+                u = User.objects.get(username=args[0].POST['username'])
+            except User.DoesNotExist:
+                return f(args[0], show_captcha)
+            except User.MultipleObjectsReturned:
+                u = u[0]
+            send_mail(
+                'Warning',
+                'You are attacking!!!!!1',
+                settings.EMAIL_HOST_USER,
+                [u.email],
+                fail_silently=False,
+            )
         return f(args[0], show_captcha)
     return process_captcha
 
@@ -84,12 +87,7 @@ class OnlyOneUserMiddleware(object):
     def process_request(self, request):
         p = Profile.objects.get(username=request.user)
         cur_session_key = p.session_key
-        print("sess  ", cur_session_key)
-        print("sess2  ", request.session.session_key)
         if cur_session_key and cur_session_key != request.session.session_key:
-            try:
-                Session.objects.get(session_key=cur_session_key).delete()
-            except:
-                pass
+            Session.objects.get(session_key=cur_session_key).delete()
         p.session_key = request.session.session_key
         p.save()
